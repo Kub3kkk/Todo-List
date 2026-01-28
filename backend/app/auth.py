@@ -28,3 +28,25 @@ def login():
             'name': user.name
         }
     }), 200
+
+@auth.route('/signup', methods=['POST'])
+def signup():
+    data = request.get_json()
+
+    email = data.get('email')
+    name = data.get('name')
+    password = data.get('password')
+
+    user = User.query.filter_by(email=email).first()
+
+    if user:
+        return jsonify({'error': 'Account with this email exists'}), 401
+    
+    new_user = User(email=email, name=name, password=bcrypt.generate_password_hash(password).decode("utf-8"))
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "message": "Account created, please login in"
+    }), 201

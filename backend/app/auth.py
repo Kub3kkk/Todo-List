@@ -25,7 +25,7 @@ def login():
         'user' : {
             'id': user.id,
             'email': user.email,
-            'name': user.name
+            'name': user.username
         }
     }), 200
 
@@ -34,7 +34,7 @@ def signup():
     data = request.get_json()
 
     email = data.get('email')
-    name = data.get('name')
+    username = data.get('username')
     password = data.get('password')
 
     user = User.query.filter_by(email=email).first()
@@ -42,7 +42,7 @@ def signup():
     if user:
         return jsonify({'error': 'Account with this email exists'}), 401
     
-    new_user = User(email=email, name=name, password=bcrypt.generate_password_hash(password).decode("utf-8"))
+    new_user = User(email=email, username=username, password=bcrypt.generate_password_hash(password).decode("utf-8"))
     db.session.add(new_user)
     db.session.commit()
 
